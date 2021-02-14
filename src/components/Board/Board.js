@@ -13,6 +13,7 @@ const Container = styled.div`
     position: relative;
     border: 2px solid grey;
     border-radius: .3rem;
+    overflow: hidden;
 `
 
 const Board = styled.div`

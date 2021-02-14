@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -32,29 +32,41 @@ const Player = props => {
 
         const key = event.key.toLowerCase()
 
+        const forbiddenY = settings.height - settings.block
+        const forbiddenX = settings.width - settings.block
+
         switch(key){
             case "arrowup":
-                setYpos(prev => prev + settings.block)
+                if(yPos + settings.block <= forbiddenY){
+                    setYpos(prev => prev + settings.block)
+                }          
                 break;
             case "arrowdown":
-                setYpos(prev => prev - settings.block)
+                if(yPos >= settings.block){
+                    setYpos(prev => prev - settings.block)
+                }
                 break;
             case "arrowright":
-                setXpos(prev => prev + settings.block)
+                if(xPos + settings.block <= forbiddenX){
+                    setXpos(prev => prev + settings.block)
+                }
                 break;
             case "arrowleft":
-                setXpos(prev => prev - settings.block)
+                if(xPos >= settings.block){
+                    setXpos(prev => prev - settings.block)
+                }
                 break;
             default: break;
         }
     }
+
 
     useEffect(() => {
         window.addEventListener("keydown", onKeyDownHandler)
         return () => {
             window.removeEventListener("keydown", onKeyDownHandler)
         }
-    }, [])
+    }, [onKeyDownHandler])
 
     return (
         <Container
