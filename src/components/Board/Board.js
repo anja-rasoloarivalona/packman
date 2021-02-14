@@ -33,16 +33,79 @@ const Board = styled.div`
         }
     }}
 `
+
+
+
 const Block = styled.div`
-    ${props => {
-        return {
-            width: `${props.theme.settings.size}rem`,
-            height: `${props.theme.settings.size}rem`
-        }
-    }};
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+
+    
+    ${props => {
+        return {
+            width: `${props.theme.settings.block}rem`,
+            height: `${props.theme.settings.block}rem`
+        }
+    }};
+
+
+    ${props => {
+        const { border } = props
+
+        if(border !== "none"){
+
+            let data = {}
+
+            if(border === "top"){
+                data = {
+                    width: "100%",
+                    top: 0,
+                    left: 0,
+                    height: "1px"
+                }
+            }
+
+            if(border === "bottom"){
+                data = {
+                    width: "100%",
+                    bottom: "-1px",
+                    left: 0,
+                    height: "1px"
+                }
+            }
+
+
+            
+            if(border === "left"){
+                data = {
+                    width: "1px",
+                    top: 0,
+                    left: 0,
+                    height: "100%"
+                }
+            }
+
+            if(border === "right"){
+                data = {
+                    width: "1px",
+                    top: 0,
+                    right: "-1px",
+                    height: "100%"
+                }
+            }
+
+            return {
+                "& .bar": {
+                    position: "absolute",
+                    background: "grey",
+                    ...data
+                }
+            }
+        }
+    }}
+
 `
 const Food = styled.div`
     width: .6rem;
@@ -51,30 +114,70 @@ const Food = styled.div`
     border-radius: 50%;
 `
 
+const Bar = styled.div``
+
+
+const barGenerator = {
+    1: "top",
+    2: "right",
+    3: "bottom",
+    4: "left"
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+console.log("init", getRandomInt(1, 4))
+
+
 const BoardNode = props => {
 
     const { settings } = props
 
-    const cols = settings.width / settings.block
-    const rows = settings.height / settings.block
+    const cols = settings.width / settings.block // 24
+    const rows = settings.height / settings.block // 16
 
     const getNumberOfBlocks = () => {
         return cols * rows
     }
 
     const nb = getNumberOfBlocks()
+
+    const forbiddenBorders = ["x0", `y0`, `x${cols-1}`, `y${rows-1}`]
     
     const initialFoods = {}
 
     for(let i = 0; i < nb; i++){
+
         const x = i < cols ? i :  Math.floor(i % cols)
         const y = i < cols ? 0 : Math.floor(i / cols)
+
+        let border = "toSet"
+
+        forbiddenBorders.forEach(forbid => {
+            if(`x${x}` === forbid || `y${y}` === forbid){
+                border = "none"
+            }
+        })
+
+        if(border === "toSet"){
+            border = barGenerator[getRandomInt(1, 4)]
+        }
+
         initialFoods[`x${x}y${y}`] = {
             active: true,
             x,
-            y
+            y,
+            border
         }
     }
+
+    console.log({
+        initialFoods
+    })
 
     const [foods, setFoods] = useState(initialFoods)
 
@@ -109,10 +212,16 @@ const BoardNode = props => {
                         key={food}
                         id={food}
                         size={settings.block}
+                        {...foods[food]}
                     >   
                         {foods[food].active && (
                             <Food />
                         )}
+                        {foods[food].border !== "none" && (
+                            <Bar className="bar"/>
+                        )}
+                        {/* x{foods[food].x}
+                        y{foods[food].y} */}
                     </Block>
                 ))}
                 <Player
