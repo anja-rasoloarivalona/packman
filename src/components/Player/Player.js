@@ -17,17 +17,13 @@ const Container = styled.div`
     justify-content: center;
 
     left: ${props => `${props.x}rem`};
-    bottom: ${props => `${props.y}rem`};
+    top: ${props => `${props.y}rem`};
 `
 
 
 const Player = props => {
 
-    const { settings } = props
-
-    const [xPos, setXpos] = useState(0)
-    const [yPos, setYpos] = useState(0)
-    const [direction, setDirection] = useState("right")
+    const { settings, xPos, setXpos, yPos, setYpos, direction, setDirection } = props
 
     const onKeyDownHandler = event => {
 
@@ -37,13 +33,13 @@ const Player = props => {
         const forbiddenX = settings.width - settings.block
 
         switch(key){
-            case "arrowup":
+            case "arrowdown":
                 if(yPos + settings.block <= forbiddenY){
                     setYpos(prev => prev + settings.block)
                     setDirection("up")
                 }          
                 break;
-            case "arrowdown":
+            case "arrowup":
                 if(yPos >= settings.block){
                     setYpos(prev => prev - settings.block)
                     setDirection("down")

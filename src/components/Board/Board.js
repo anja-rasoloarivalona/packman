@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Player from '../Player/Player'
 
@@ -13,7 +13,6 @@ const Container = styled.div`
     position: relative;
     border: 2px solid grey;
     border-radius: .3rem;
-    overflow: hidden;
 `
 
 const Board = styled.div`
@@ -40,38 +39,91 @@ const Block = styled.div`
             width: `${props.theme.settings.size}rem`,
             height: `${props.theme.settings.size}rem`
         }
-    }}
+    }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `
-
+const Food = styled.div`
+    width: .6rem;
+    height: .6rem;
+    background: white;
+    border-radius: 50%;
+`
 
 const BoardNode = props => {
 
     const { settings } = props
 
+    const cols = settings.width / settings.block
+    const rows = settings.height / settings.block
+
     const getNumberOfBlocks = () => {
-        const cols = settings.width / settings.block
-        const rows = settings.height / settings.block
         return cols * rows
     }
 
-    const renderBlocks = () => {
-        const nbBlocks = getNumberOfBlocks()
-        const blockArrays = []
-        for(let i = 0; i < nbBlocks; i++){
-            blockArrays.push(
-                <Block key={i} size={settings.block}/>
-            )
+    const nb = getNumberOfBlocks()
+    
+    const initialFoods = {}
+
+    for(let i = 0; i < nb; i++){
+        const x = i < cols ? i :  Math.floor(i % cols)
+        const y = i < cols ? 0 : Math.floor(i / cols)
+        initialFoods[`x${x}y${y}`] = {
+            active: true,
+            x,
+            y
         }
-        return blockArrays
     }
 
+    const [foods, setFoods] = useState(initialFoods)
+
+
+    const [xPos, setXpos] = useState(-5)
+    const [yPos, setYpos] = useState(0)
+    const [direction, setDirection] = useState("right")
+
+    useEffect(() => {
+
+        const updatedX = xPos / 5
+        const updatedY = yPos / 5
+
+        if(foods[`x${updatedX}y${updatedY}`] && foods[`x${updatedX}y${updatedY}`].active){
+            const updatedFoods = {
+                ...foods,
+                [`x${updatedX}y${updatedY}`]: {
+                    ...foods[`x${updatedX}y${updatedY}`],
+                    active: false
+                }
+            }
+            setFoods(updatedFoods)
+        }
+    }, [xPos, yPos])
 
     return (
 
         <Container>
             <Board>
-                {renderBlocks()}
-                <Player settings={settings}/>
+                {Object.keys(foods).map(food => (
+                    <Block
+                        key={food}
+                        id={food}
+                        size={settings.block}
+                    >   
+                        {foods[food].active && (
+                            <Food />
+                        )}
+                    </Block>
+                ))}
+                <Player
+                    settings={settings}
+                    xPos={xPos}
+                    setXpos={setXpos}
+                    yPos={yPos}
+                    setYpos={setYpos}
+                    direction={direction}
+                    setDirection={setDirection}
+                />
             </Board>
         </Container>
     )
