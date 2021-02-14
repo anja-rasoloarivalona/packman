@@ -70,7 +70,7 @@ const BoardNode = props => {
         <Container>
             <Board>
                 {renderBlocks()}
-                <Player />
+                <Player settings={settings}/>
             </Board>
         </Container>
     )
