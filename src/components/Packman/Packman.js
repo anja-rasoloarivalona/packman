@@ -6,8 +6,8 @@ const setRotation = direction => {
     switch (direction){
         case "right": return "rotate(0deg)";
         case "left": return " scale(-1, 1)";
-        case "down": return "rotate(-90deg)";
-        case "up": return "rotate(90deg)";
+        case "up": return "rotate(-90deg)";
+        case "down": return "rotate(90deg)";
         default: break
     }
 }

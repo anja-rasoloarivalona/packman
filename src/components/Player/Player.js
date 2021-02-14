@@ -23,38 +23,64 @@ const Container = styled.div`
 
 const Player = props => {
 
-    const { settings, xPos, setXpos, yPos, setYpos, direction, setDirection } = props
+    const { settings, xPos, setXpos, yPos, setYpos, direction, setDirection, foods} = props
+
+    const forbiddenY = settings.height - settings.block
+    const forbiddenX = settings.width - settings.block
+
+    // console.log({
+    //     foods
+    // })
 
     const onKeyDownHandler = event => {
 
         const key = event.key.toLowerCase()
-
-        const forbiddenY = settings.height - settings.block
-        const forbiddenX = settings.width - settings.block
+        const currentId = `x${Math.floor(xPos / 5)}y${Math.floor(yPos / 5)}`
 
         switch(key){
             case "arrowdown":
                 if(yPos + settings.block <= forbiddenY){
-                    setYpos(prev => prev + settings.block)
-                    setDirection("up")
+                    const nextId = `x${Math.floor(xPos / 5)}y${Math.floor(yPos / 5) + 1}`
+                    setDirection("down")
+                    if(foods[nextId].border !== "top" && foods[currentId].border !== "bottom"){
+                        setYpos(prev => prev + settings.block)
+                    }
                 }          
                 break;
             case "arrowup":
                 if(yPos >= settings.block){
-                    setYpos(prev => prev - settings.block)
-                    setDirection("down")
+                    const nextId = `x${Math.floor(xPos / 5)}y${Math.floor(yPos / 5) - 1}`
+                    setDirection("up")
+
+                    if(foods[nextId].border !== "bottom" && foods[currentId].border !== "top"){
+                        setYpos(prev => prev - settings.block)
+                    }
                 }
                 break;
             case "arrowright":
                 if(xPos + settings.block <= forbiddenX){
-                    setXpos(prev => prev + settings.block)
+
                     setDirection("right")
+
+                    const nextId = `x${Math.floor(xPos / 5) + 1}y${Math.floor(yPos / 5)}`
+
+                    if(xPos < 0){
+                        setXpos(prev => prev + settings.block)
+                    } else if(foods[nextId].border !== "left"  && foods[currentId].border !== "right"){
+                        setXpos(prev => prev + settings.block)
+                    }                    
                 }
                 break;
             case "arrowleft":
                 if(xPos >= settings.block){
                     setDirection("left")
-                    setXpos(prev => prev - settings.block)
+
+                    const nextId = `x${Math.floor(xPos / 5) - 1}y${Math.floor(yPos / 5)}`
+
+                    if(foods[nextId].border !== "right" && foods[currentId].border !== "left"){
+                        setXpos(prev => prev - settings.block)
+                    }   
+                 
                 }
                 break;
             default: break;

@@ -130,9 +130,6 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-console.log("init", getRandomInt(1, 4))
-
-
 const BoardNode = props => {
 
     const { settings } = props
@@ -175,10 +172,6 @@ const BoardNode = props => {
         }
     }
 
-    console.log({
-        initialFoods
-    })
-
     const [foods, setFoods] = useState(initialFoods)
 
 
@@ -203,6 +196,11 @@ const BoardNode = props => {
         }
     }, [xPos, yPos])
 
+
+    // console.log({
+    //     foods
+    // })
+
     return (
 
         <Container>
@@ -217,11 +215,11 @@ const BoardNode = props => {
                         {foods[food].active && (
                             <Food />
                         )}
+                        {/* x {foods[food].x}
+                        y {foods[food].y} */}
                         {foods[food].border !== "none" && (
                             <Bar className="bar"/>
                         )}
-                        {/* x{foods[food].x}
-                        y{foods[food].y} */}
                     </Block>
                 ))}
                 <Player
@@ -232,6 +230,7 @@ const BoardNode = props => {
                     setYpos={setYpos}
                     direction={direction}
                     setDirection={setDirection}
+                    foods={foods}
                 />
             </Board>
         </Container>
