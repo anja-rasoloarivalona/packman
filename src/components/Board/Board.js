@@ -23,7 +23,7 @@ const Board = styled.div`
     right: 0;
     bottom: 0;
     margin: auto;
-    background: rgba(0,0,0, .5);
+    background: #3d3c3c;
     display: grid;
 
     ${props => {
